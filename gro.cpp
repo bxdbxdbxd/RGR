@@ -9,6 +9,7 @@ using namespace std;
 
 int funMod(int simbl, int numkey, int quaAlp);
 string funCryp(string word, string key);
+string funEncryp(string word, string key);
 
 int main() {
     SetConsoleCP(1251);
@@ -17,24 +18,29 @@ int main() {
 
     string key = "12345";
     string newWord = "";
-    int var;
+    int var, error = 0;
     string word;
     cin >> word;
     cout << "choose cypher(1) or decypher(2): ";
     cin >> var;
+    newWord = word;
     //int encrypNum = funMod();
-    switch(var){
-        case 1:
-            newWord = funCryp(word, key);
-            cout << "---" << newWord << "---";
-        break;
-        case 2:
-            
-        break;
-        default:
-            cout<<"You must make correct choice";
-        break;
-    }
+    //while(error != 1) {
+        switch(var){
+            case 1:
+                newWord = funCryp(word, key);
+                cout << "---" << newWord << "---";
+            break;
+            case 2:
+                newWord = funEncryp(newWord, key);
+                cout << "---" << newWord << "---";
+            break;
+            default:
+                cout<<"You must make correct choice";
+                error = 1;
+            break;
+        }
+    //}
 
     return 0;
 }
@@ -45,9 +51,24 @@ int funMod(int simbl, int numkey, int quaAlp) {
 }
 
 string funCryp(string word, string key) {
-    string new_word;
+    string cryp_word;
     for (int i = 0; i < word.size(); i++) {
-        new_word.push_back(funMod((int)word[i], key[i%key.size()], LEN));
+        cryp_word.push_back(funMod((int)word[i], key[i%key.size()] - 48, LEN));
     }
-    return new_word;
+    return cryp_word;
+}
+
+string funEncryp(string word, string key) {
+    string encryp_word;
+    for (int i = 0; i < word.size(); i++) {
+        int key_val = key[i%key.size()] - 48;
+        int value = word[i] - key_val;
+        if (value < 0) {
+            encryp_word.push_back(255 + value + 1);
+        }
+        else {
+            encryp_word.push_back(value + 1);
+        }
+    }
+    return encryp_word;
 }
