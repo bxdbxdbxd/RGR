@@ -53,7 +53,7 @@ int funMod(int simbl, int numkey, int quaAlp) {
 string funCryp(string word, string key) {
     string cryp_word;
     for (int i = 0; i < word.size(); i++) {
-        cryp_word.push_back(funMod((int)word[i], key[i%key.size()] - 48, LEN));
+        cryp_word.push_back(funMod(word[i], key[i%key.size()] - 48, LEN));
     }
     return cryp_word;
 }
@@ -63,11 +63,21 @@ string funEncryp(string word, string key) {
     for (int i = 0; i < word.size(); i++) {
         int key_val = key[i%key.size()] - 48;
         int value = word[i] - key_val;
-        if (value < 0) {
-            encryp_word.push_back(255 + value + 1);
+        if (-64 <= (int)word[i] && (int)word[i] <= -1) {
+            if (value < 0) {
+                encryp_word.push_back(255 + value + 1);
+            }
+            else {
+                encryp_word.push_back(value + 1);
+            }
         }
         else {
-            encryp_word.push_back(value + 1);
+            if (value < 0) {
+                encryp_word.push_back(255 + value);
+            }
+            else {
+                encryp_word.push_back(value);
+            }
         }
     }
     return encryp_word;
