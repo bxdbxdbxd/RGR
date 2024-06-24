@@ -16,7 +16,7 @@ int main() {
     SetConsoleOutputCP(1251);
     setlocale(LC_ALL,"russian");
 
-    string key = "12345";
+    string key = "12945";
     string newWord = "";
     int var, error = 0;
     string word;
@@ -53,7 +53,13 @@ int funMod(int simbl, int numkey, int quaAlp) {
 string funCryp(string word, string key) {
     string cryp_word;
     for (int i = 0; i < word.size(); i++) {
-        cryp_word.push_back(funMod(word[i], key[i%key.size()] - 48, LEN));
+        int value = funMod(word[i], key[i%key.size()] - 48, LEN);
+        if (value > -1 && value < 33) {
+            cryp_word.push_back(value + 33);
+        }
+        else {
+            cryp_word.push_back(value);
+        }
     }
     return cryp_word;
 }
@@ -64,12 +70,16 @@ string funEncryp(string word, string key) {
         int key_val = key[i%key.size()] - 48;
         int value = word[i] - key_val;
         if (-64 <= (int)word[i] && (int)word[i] <= -1) {
-            if (value < 0) {
-                encryp_word.push_back(255 + value + 1);
+            if (value < -64) {
+                encryp_word.push_back(192 + (value + 64));
             }
             else {
-                encryp_word.push_back(value + 1);
+                encryp_word.push_back(value);
             }
+        }
+        else {
+        if (value < 33) {
+            encryp_word.push_back(-1 - (33 - value) + 1);
         }
         else {
             if (value < 0) {
@@ -78,6 +88,7 @@ string funEncryp(string word, string key) {
             else {
                 encryp_word.push_back(value);
             }
+        }
         }
     }
     return encryp_word;
