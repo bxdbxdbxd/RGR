@@ -20,7 +20,7 @@ int main() {
     string newWord = "";
     int var, error = 0;
     string word;
-    cin >> word;
+    getline(cin, word);
     cout << "choose cypher(1) or decypher(2): ";
     cin >> var;
     newWord = word;
@@ -78,7 +78,7 @@ string funEncryp(string word, string key) {
             }
         }
         else {
-        if (value < 33) {
+        if (value < 32) {
             encryp_word.push_back(-1 - (33 - value) + 1);
         }
         else {
