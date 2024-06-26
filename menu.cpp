@@ -1,7 +1,8 @@
 #include <iostream>
 #include <string>
+#include <locale.h>
+#include <windows.h>
 #include <functional>
-#include <fstream>
 
 #include "functions.h"
 
@@ -13,6 +14,9 @@ function<void(string)> choice_method();
 string read_file(const string& filename);
 
 int main() {
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
+    setlocale(LC_ALL,"russian");
     // Сравнение хэшей
     if (!is_password_correct()) {
         cout << "Password incorrect. Application closed." << endl;
@@ -21,9 +25,8 @@ int main() {
 
     while (true) {
         function<void(string)> method;
-        string content;
-        bool process;
-
+        string content, nl;
+        bool process, error = 1;
         do
         {
             // Выбор метода
@@ -37,31 +40,63 @@ int main() {
             }
         } while (true);
         
-        do
-        {
-            string filename;
-            cout << "Input file name: ";
-            cin >> filename;
-            content = read_file(filename);
-            if (content.length() == 0) {
-                cout << "File not found. Try again." << endl;
-                continue;
-            }
-            else {
+        getline(cin, nl);
+        cout << "Select input type: console(1) or file(2)" << endl;
+        getline(cin, type_inp);
+        cout << endl;
+
+        if (type_inp == "1") {
+            cout << "Enter text ";
+            getline(cin, content);
+        }
+        else if (type_inp == "2") {
+            do
+            {
+                string filename;
+                cout << "Input file name: ";
+                cin >> filename;
+                content = read_file(filename);
+                if (content.length() == 0) {
+                    cout << "File not found. Try again." << endl;
+                    continue;
+                }
+                else {
+                    break;
+                }
+            } while (true);
+        }
+        else {
+            error = 0;
+            cout << "You must make correct choice" << endl;
+        }
+        if (error == 1) {
+            int var;
+            cout << "Choice ecrypt(1) or decrypt(2)?" << endl;
+            cin >> var;
+            cout << endl;
+            switch(var) {
+                case 1:
+                    cout << "Choicecrypt: " << var << endl;
+                    cout << "Method work: ";
+                    act_cel = 0;
+                    method(content);
+                break;
+                case 2:
+                    cout << "Choicecrypt: " << var << endl;
+                    cout << "Method work: ";
+                    act_cel = 1;
+                    method(content);
+                break;
+                default:
+                    cout << "You must make correct choice";
                 break;
             }
-        } while (true);
-        
-        cout << "Choice ecrypt or decrypt data?" << endl;
-        cout << "true - Encrypt" << endl << "false - Decrypt" << endl;
-        cin >> process;
-        
-        // Тестирование работы
-        cout << "Choicecrypt: " << process << endl;
-        cout << "Method work: ";
-        method(content);
+            
+            // Тестирование работы
+        }
+            //method(content);
         cout << endl;
-        // Тестирование работы
+            // Тестирование работы
 
         int is_not_exit;
         cout << "Do you want to exit?" << endl;
@@ -71,10 +106,8 @@ int main() {
             cout << "Bzzzz... Restart system... bzzz" << endl;
             continue;
         }
-
         break; // Завершение цикла после успешного выбора
     }
-
     return 0;
 }
 
