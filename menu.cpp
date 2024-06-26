@@ -138,9 +138,9 @@ unsigned int simple_hash(const string &str) {
 
 function<void(string)> choice_method() {
     pair<string, function<void(string)>> menu[] = {
-        {"First", first},
-        {"Second", second},
-        {"Third", third},
+        {"Gronsfeld", first},
+        {"Elgamal", second},
+        {"RSA", third},
         {"Fourth", fourth},
         {"Fifth", fifth},
         {"Sixth", sixth},
