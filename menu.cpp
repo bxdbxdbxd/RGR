@@ -142,11 +142,11 @@ function<void(string)> choice_method() {
         {"Elgamal", second},
         {"RSA", third},
         {"Caesarianae", fourth},
-        {"Fifth", fifth},
-        {"Sixth", sixth},
-        {"Seventh", seventh},
-        {"Eighth", eighth},
-        {"Ninth", ninth}
+        {"Atbash", fifth},
+        {"Vernam", sixth},
+        {"Enigma", seventh},
+        {"ROT1", eighth},
+        {"A1Z26", ninth}
     };
     int count = sizeof(menu)/sizeof(menu[0]);
 

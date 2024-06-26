@@ -19,6 +19,7 @@ set<int> prime;
 int public_key;
 int private_key;
 int n;
+struct Rotor;
 
 string funCrypGro(string word, string key);
 string funEncrypGro(string word, string key);
@@ -45,6 +46,11 @@ string decypher(string text, int step,int max);
 
 string cypherAtb(string text,int max);
 string decypherAtb(string text,int max);
+
+string enigma(string data, bool flag);
+
+string cypherRot(string text, int step,int max);
+string decypherRot(string text, int step,int max);
 
 void first(string data) {
     string newWord = data;
@@ -224,15 +230,73 @@ void sixth(string data){
 }
 
 void seventh(string data){
-    std::cout << "seventh" << std::endl << data << std::endl << "seventh";
+    string newWord = data;
+    cout << "Enigma" << endl;
+    if (act_cel == 0) {
+        newWord = enigma(newWord, true);
+        if (type_inp == "1") {
+            cout << "The encoded message  " << newWord << endl;
+        } 
+        else {
+            ofstream CrypFile("ciphertext.txt");
+            CrypFile << newWord;
+            CrypFile.close();
+            cout << "File created" << endl;
+        }
+        act_cel = -1;
+    }
+    if (act_cel == 1) {
+        newWord = enigma(newWord, false);
+        if (type_inp == "1") {
+            cout << "The decoded message  " << newWord << endl;
+        }
+        else {
+            ofstream EncrypFile("deciphertext.txt");
+            EncrypFile << newWord;
+            EncrypFile.close();
+            cout << "File created" << endl;
+        }
+        act_cel = -1;
+    }
 }
 
 void eighth(string data){
-    std::cout << "eighth" << std::endl << data << std::endl << "eighth";
+    string newWord = data;
+    cout << "ROT1" << endl;
+    int step=1;
+    if (act_cel == 0) {
+        newWord = cypherRot(newWord,step,LEN);
+        if (type_inp == "1") {
+            cout << "The encoded message  " << newWord << endl;
+        } 
+        else {
+            ofstream CrypFile("ciphertext.txt");
+            CrypFile << newWord;
+            CrypFile.close();
+            cout << "File created" << endl;
+        }
+        act_cel = -1;
+    }
+    if (act_cel == 1) {
+        newWord = decypherRot(newWord,step,LEN);
+        if (type_inp == "1") {
+            cout << "The decoded message  " << newWord << endl;
+        }
+        else {
+            ofstream EncrypFile("deciphertext.txt");
+            EncrypFile << newWord;
+            EncrypFile.close();
+            cout << "File created" << endl;
+        }
+        act_cel = -1;
+    }
+
 }
 
 void ninth(string data){
-    std::cout << "ninth" << std::endl << data << std::endl << "ninth";
+    string message = data;
+    cout << "A1Z26" << endl;
+    
 }
 
 //for Gronsfeld
@@ -492,3 +556,102 @@ string decypherAtb(string text, int max){
     }
     return text;
 }
+
+
+//for Enigma
+struct Rotor {
+    int position;
+    vector<char> wiring;
+    vector<char> reverse_wiring;
+
+    // Конструктор
+    Rotor(int rotor_number, int index) : position(index) {
+        switch (rotor_number)
+        {
+        case 1:
+            wiring = { 'E', 'K', 'M', 'F', 'L', 'G', 'D', 'Q', 'V', 'Z', 'N', 'T', 'O', 'W', 'Y', 'H', 'X', 'U', 'S', 'P', 'A', 'I', 'B', 'R', 'C', 'J' };
+            break;
+        case 2:
+            wiring = { 'A', 'J', 'D', 'K', 'S', 'I', 'R', 'U', 'X', 'B', 'L', 'H', 'W', 'T', 'M', 'C', 'Q', 'G', 'Z', 'N', 'P', 'Y', 'F', 'V', 'O', 'E' };
+            break;
+        case 3:
+            wiring = { 'B', 'D', 'F', 'H', 'J', 'L', 'C', 'P', 'R', 'T', 'X', 'V', 'Z', 'N', 'Y', 'E', 'I', 'W', 'G', 'A', 'K', 'M', 'U', 'S', 'Q', 'O' };
+            break;
+        default:
+            throw runtime_error("Rotor number incorrect");
+        }
+
+        reverse_wiring.resize(26);
+        for (int i = 0; i < 26; ++i) {
+            reverse_wiring[wiring[i] - 'A'] = 'A' + i;
+        }
+    }
+
+    char encode(char c) {
+        int index = (c - 'A' + position) % 26;
+        return wiring[index];
+    }
+
+    char decode(char c) {
+        int index = (find(wiring.begin(), wiring.end(), c) - wiring.begin() - position + 26) % 26;
+        return 'A' + index;
+    }
+
+    void rotate() {
+        position = (position + 1) % 26;
+    }
+};
+
+string enigma(string data, bool flag) {
+    // Выбор роторов и начальных позиций
+    Rotor rotor1(1, 0);
+    Rotor rotor2(2, 0);
+    Rotor rotor3(3, 0);
+
+    string result;
+    for (char c : data) {
+        if (isalpha(c)) {
+            char upper = toupper(c);
+            if (flag) {
+                upper = rotor1.encode(upper);
+                upper = rotor2.encode(upper);
+                upper = rotor3.encode(upper);
+            }
+            else {
+                upper = rotor3.decode(upper);
+                upper = rotor2.decode(upper);
+                upper = rotor1.decode(upper);
+            }
+            rotor1.rotate();
+            if (rotor1.position == 0) {
+                rotor2.rotate();
+                if (rotor2.position == 0) {
+                    rotor3.rotate();
+                }
+            }
+            result += upper;
+        }
+        else {
+            result += c;
+        }
+    }
+    return result;
+}
+
+//fot ROT1
+string cypherRot(string text, int step, int max){ //шифровщик
+    for(int i=0;i<text.size();i++){
+        text[i]=text[i]+step;
+        text[i]=text[i]%max;
+    }
+    return text;
+}
+string decypherRot(string text, int step, int max){ // дешифровщик
+    for(int i=0;i<text.size();i++){
+        text[i]=text[i]-step;
+        text[i]=text[i]%max;
+    }
+    return text;
+}
+
+//for A1Z26
