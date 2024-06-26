@@ -141,7 +141,7 @@ function<void(string)> choice_method() {
         {"Gronsfeld", first},
         {"Elgamal", second},
         {"RSA", third},
-        {"Fourth", fourth},
+        {"Caesarianae", fourth},
         {"Fifth", fifth},
         {"Sixth", sixth},
         {"Seventh", seventh},

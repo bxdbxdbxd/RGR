@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <random>
 #include <bits/stdc++.h>
+#include "functionVernam.h"
+#include "functionVernam.cpp"
 
 using namespace std;
 
@@ -37,6 +39,12 @@ long long int encrypt(double message);
 long long int decrypt(int encrpyted_text);
 vector<int> encoder(string message);
 string decoder(vector<int> encoded);
+
+string cypher(string text, int step,int max);
+string decypher(string text, int step,int max);
+
+string cypherAtb(string text,int max);
+string decypherAtb(string text,int max);
 
 void first(string data) {
     string newWord = data;
@@ -145,27 +153,85 @@ void third(string data){
     }
 }
 
-void fourth(std::string data){
-    std::cout << "fourth" << std::endl << data << std::endl << "fourth";
+void fourth(string data){
+    string newWord = data;
+    cout << "Cezar" << endl;
+    int step=0;
+    cout << "Enter the key value: ";
+    cin >> step;
+    if (act_cel == 0) {
+        newWord = cypher(newWord,step,LEN);
+        if (type_inp == "1") {
+            cout << "The encoded message  " << newWord << endl;
+        } 
+        else {
+            ofstream CrypFile("ciphertext.txt");
+            CrypFile << newWord;
+            CrypFile.close();
+            cout << "File created" << endl;
+        }
+        act_cel = -1;
+    }
+    if (act_cel == 1) {
+        newWord = decypher(newWord,step,LEN);
+        if (type_inp == "1") {
+            cout << "The decoded message  " << newWord << endl;
+        }
+        else {
+            ofstream EncrypFile("deciphertext.txt");
+            EncrypFile << newWord;
+            EncrypFile.close();
+            cout << "File created" << endl;
+        }
+        act_cel = -1;
+    }
 }
 
-void fifth(std::string data){
-    std::cout << "fifth" << std::endl << data << std::endl << "fifth";
+void fifth(string data){
+    string newWord = data;
+    cout << "Atbash" << endl;
+    if (act_cel == 0) {
+        newWord = cypherAtb(newWord,LEN);
+        if (type_inp == "1") {
+            cout << "The encoded message  " << newWord << endl;
+        } 
+        else {
+            ofstream CrypFile("ciphertext.txt");
+            CrypFile << newWord;
+            CrypFile.close();
+            cout << "File created" << endl;
+        }
+        act_cel = -1;
+    }
+    if (act_cel == 1) {
+        newWord = decypherAtb(newWord,LEN);
+        if (type_inp == "1") {
+            cout << "The decoded message  " << newWord << endl;
+        }
+        else {
+            ofstream EncrypFile("deciphertext.txt");
+            EncrypFile << newWord;
+            EncrypFile.close();
+            cout << "File created" << endl;
+        }
+        act_cel = -1;
+    }
 }
 
-void sixth(std::string data){
-    std::cout << "sixth" << std::endl << data << std::endl << "sixth";
+void sixth(string data){
+    string message = data;
+    cout << "Vernam" << endl;
 }
 
-void seventh(std::string data){
+void seventh(string data){
     std::cout << "seventh" << std::endl << data << std::endl << "seventh";
 }
 
-void eighth(std::string data){
+void eighth(string data){
     std::cout << "eighth" << std::endl << data << std::endl << "eighth";
 }
 
-void ninth(std::string data){
+void ninth(string data){
     std::cout << "ninth" << std::endl << data << std::endl << "ninth";
 }
 
@@ -393,4 +459,36 @@ string decoder(vector<int> encoded) {
 	for (auto& num : encoded)
 		s += decrypt(num);
 	return s;
+}
+
+//for Cezar
+string cypher(string text, int step,int max){
+    for(int i=0;i<text.size();i++){
+        text[i]=text[i]+step;
+        text[i]=text[i]%max;
+    }
+    return text;
+}
+string decypher(string text, int step,int max){
+    for(int i=0;i<text.size();i++){
+        text[i]=text[i]-step;
+        text[i]=text[i]%max;
+    }
+    return text;
+}
+
+//for Atbash
+string cypherAtb(string text, int max){
+    for(int i=0;i<text.size();i++){
+        text[i]=max-text[i]+1;
+        text[i]=text[i]%max;
+    }
+    return text;
+}
+string decypherAtb(string text, int max){
+    for(int i=0;i<text.size();i++){
+        text[i]=max-text[i]+1;;
+        text[i]=text[i]%max;
+    }
+    return text;
 }
