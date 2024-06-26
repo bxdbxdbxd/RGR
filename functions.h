@@ -22,6 +22,7 @@ string funCrypGro(string word, string key);
 string funEncrypGro(string word, string key);
 int funMod(int simbl, int numkey, int quaAlp);
 
+int createdPubKey(int pub[], int a, int p, int b);
 int generVal(int a, int y, int p);
 int greatest_com_div(int a, int b);
 bool funPrimRoot(vector<int>& vec, int a, int p);
@@ -71,8 +72,52 @@ void first(string data) {
 
 void second(string data){
     string newWord = data;
-    cout << "Gronsfeld" << endl;
-    std::cout << "second" << std::endl << data << std::endl << "second";
+    cout << "Elgamal" << endl;
+    int primitive_root = 0, prime_num = 11, private_key = 6, public_key[3];
+    vector<int> residues(prime_num - 1);
+    bool result = false;
+    int y = rand() % prime_num;
+    for (int i = 1; i < prime_num; i++) {
+        result = funPrimRoot(residues, i, prime_num);
+        if (result == true) {
+            primitive_root = i;
+            cout << "Primitive root" << primitive_root << endl;
+            break;
+        }
+    }
+    if (primitive_root != 0) {
+        createdPubKey(public_key, primitive_root, prime_num, funModul(primitive_root, private_key, prime_num));
+        cout << "Public key " << public_key[0] << ", " << public_key[1] << ", " << public_key[2] << endl;
+        if (act_cel == 0) {
+            newWord = funCrypElGam(newWord, prime_num, primitive_root, public_key[2], y);
+            if (type_inp == "1") {
+                cout << "The encoded message  " << newWord << endl;
+            } 
+            else {
+                ofstream CrypFile("ciphertext.txt");
+                CrypFile << newWord;
+                CrypFile.close();
+                cout << "File created" << endl;
+            }
+            act_cel = -1;
+        }
+        if (act_cel == 1) {
+            newWord = funEncrypElGam(newWord, private_key, prime_num, generVal(public_key[0], y, public_key[1]));
+            if (type_inp == "1") {
+                cout << "The decoded message  " << newWord << endl;
+            }
+            else {
+                ofstream EncrypFile("deciphertext.txt");
+                EncrypFile << newWord;
+                EncrypFile.close();
+                cout << "File created" << endl;
+            }
+            act_cel = -1;
+        } 
+    }
+    else {
+        cout << "Error";
+    }
 }
 
 void third(string data){
@@ -175,6 +220,12 @@ string funEncrypGro(string word, string key) {
 }
 
 //for Elgamal
+int createdPubKey(int pub[], int a, int p, int b) {
+    pub[0] = a;
+    pub[1] = p;
+    pub[2] = b;
+}
+
 int generVal(int a, int y, int p) {
     int val = funModul(a, y, p);
     return val;
@@ -221,10 +272,8 @@ string funCrypElGam(string word, int p, int a, int b, int y) {
     string cryp_word;
     int k;
     k = funModul(b, y, p);
-    cout << y << "  " << k << "   88   " << b << "  ";
     for (int i = 0; i < word.size(); i++) {
         int value = (int)word[i] + k;
-        cout << "- " << (int)word[i] << "   " << k << "   " << value << endl;
         if (value > -1 && value < 33) {
             cryp_word.push_back(value + 33);
         }
@@ -237,7 +286,6 @@ string funCrypElGam(string word, int p, int a, int b, int y) {
 
 string funEncrypElGam(string word, int x, int p, int tran_val) {
     string encryp_word;
-    cout << tran_val << "  " << x;
     for (int i = 0; i < word.size(); i++) {
         int value = word[i] - funModul(tran_val, x, p);
         if (-64 <= (int)word[i] && (int)word[i] <= -1) {
