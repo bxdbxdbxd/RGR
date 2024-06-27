@@ -52,6 +52,12 @@ string enigma(string data, bool flag);
 string cypherRot(string text, int step,int max);
 string decypherRot(string text, int step,int max);
 
+string A1Z26_cypher(string input_string);
+string A1Z26_decypher(string input_string);
+
+string cypherVer(string m);
+string decypherVer(string m);
+
 void first(string data) {
     string newWord = data;
     cout << "Gronsfeld" << endl;
@@ -225,8 +231,34 @@ void fifth(string data){
 }
 
 void sixth(string data){
-    string message = data;
+    string newWord = data;
     cout << "Vernam" << endl;
+    if (act_cel == 0) {
+        newWord = cypherVer(newWord);
+        if (type_inp == "1") {
+            cout << "The encoded message  " << newWord << endl;
+        } 
+        else {
+            ofstream CrypFile("ciphertext.txt");
+            CrypFile << newWord;
+            CrypFile.close();
+            cout << "File created" << endl;
+        }
+        act_cel = -1;
+    }
+    if (act_cel == 1) {
+        newWord = decypherVer(newWord);
+        if (type_inp == "1") {
+            cout << "The decoded message  " << newWord << endl;
+        }
+        else {
+            ofstream EncrypFile("deciphertext.txt");
+            EncrypFile << newWord;
+            EncrypFile.close();
+            cout << "File created" << endl;
+        }
+        act_cel = -1;
+    }
 }
 
 void seventh(string data){
@@ -294,8 +326,34 @@ void eighth(string data){
 }
 
 void ninth(string data){
-    string message = data;
+    string newWord = data;
     cout << "A1Z26" << endl;
+    if (act_cel == 0) {
+        newWord = A1Z26_cypher(newWord);
+        if (type_inp == "1") {
+            cout << "The encoded message  " << newWord << endl;
+        } 
+        else {
+            ofstream CrypFile("ciphertext.txt");
+            CrypFile << newWord;
+            CrypFile.close();
+            cout << "File created" << endl;
+        }
+        act_cel = -1;
+    }
+    if (act_cel == 1) {
+        newWord = A1Z26_decypher(newWord);
+        if (type_inp == "1") {
+            cout << "The decoded message  " << newWord << endl;
+        }
+        else {
+            ofstream EncrypFile("deciphertext.txt");
+            EncrypFile << newWord;
+            EncrypFile.close();
+            cout << "File created" << endl;
+        }
+        act_cel = -1;
+    }
     
 }
 
@@ -556,6 +614,42 @@ string decypherAtb(string text, int max){
     }
     return text;
 }
+//for Vernam
+string cypherVer(string m){
+    int t,n,i,j,k,sum=0;
+    string key;
+    cout<<"Enter the key"<<'\n';
+    cin>>key;
+    int mod = key.size();
+    j=0;
+    for(i=key.size();i<m.size();i++){
+        key+=key[j%mod];
+        j++;
+    }
+    string ans="";
+    for(i=0;i<m.size();i++){
+        ans += (key[i]-'A'+m[i]-'A')%26+'A';
+    }
+    return ans;
+    
+}
+string decypherVer(string m){
+    int t,n,i,j,k,sum=0;
+    string key;
+    cout<<"Enter the key"<<'\n';
+    cin>>key;
+    int mod = key.size();
+    j=0;
+    for(i=key.size();i<m.size();i++){
+        key+=key[j%mod];
+        j++;
+    }
+    string ans="";
+    for(i=0;i<m.size();i++){
+        ans += (m[i]-key[i]+26)%26+'A';
+    }
+    return ans;
+}
 
 
 //for Enigma
@@ -653,5 +747,30 @@ string decypherRot(string text, int step, int max){ // дешифровщик
     }
     return text;
 }
-
 //for A1Z26
+string A1Z26_decypher(string input_string){
+        char input_char;
+        string output_string;
+        string decrypt;
+        stringstream input_stream(input_string);
+        while(input_stream>> input_char){
+            int number=toupper(input_char)-64;
+            output_string+= to_string(number)+" ";
+            if(number>26 or number<1) throw logic_error("Only upper case english letters");
+            decrypt=static_cast<char>(number);
+        }
+        return output_string;
+}
+
+string A1Z26_cypher(string input_string){
+        string decrypt;
+        string output_string;
+        stringstream input_stream(input_string);
+        while(input_stream>>input_string){
+            int number;
+            number=stoi(input_string)+64;
+            output_string+= static_cast<char>(number);
+            if(number>26+64 or number<65) throw logic_error("Numbers must be between 0 and 27");            
+        }
+    return output_string;
+}
