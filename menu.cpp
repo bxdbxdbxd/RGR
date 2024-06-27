@@ -68,6 +68,7 @@ int main() {
         else {
             error = 0;
             cout << "You must make correct choice" << endl;
+            return 0;
         }
         if (error == 1) {
             int var;

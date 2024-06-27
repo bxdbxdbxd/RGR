@@ -757,7 +757,6 @@ string A1Z26_decypher(string input_string){
             int number=toupper(input_char)-64;
             output_string+= to_string(number)+" ";
             if(number>26 or number<1) throw logic_error("Only upper case english letters");
-            decrypt=static_cast<char>(number);
         }
         return output_string;
 }
